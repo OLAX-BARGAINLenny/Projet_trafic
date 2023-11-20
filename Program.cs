@@ -13,20 +13,14 @@ namespace SimulationTrafic
 
             // Créer des véhicules
             Voiture voiture1 = new Voiture();
-            Piéton piéton1 = new Piéton();
 
             // Simuler les actions des véhicules à différentes intersections
             rondPoint.EntrerIntersection(voiture1);
             rondPoint.Attendre(voiture1);
             rondPoint.SortirIntersection(voiture1);
 
-            cederLePassageIntersection.EntrerIntersection(voiture1);
-            cederLePassageIntersection.Attendre(voiture1);
-            cederLePassageIntersection.SortirIntersection(voiture1);
-
-            feuTricoloreIntersection.EntrerIntersection(piéton1);
-            feuTricoloreIntersection.Attendre(piéton1);
-            feuTricoloreIntersection.SortirIntersection(piéton1);
+            feuTricoloreIntersection.EntrerIntersection(voiture1);
+            feuTricoloreIntersection.SortirIntersection(voiture1);
         }
     }
 }
