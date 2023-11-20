@@ -4,7 +4,7 @@ namespace SimulationTrafic
 {
     public class Vehicule
     {
-        public string Type { get; set; }
+        public string Type { get; private set; }
 
         public Vehicule(string type)
         {

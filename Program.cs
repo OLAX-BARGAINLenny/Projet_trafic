@@ -1,26 +1,40 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SimulationTrafic
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            // Créer des intersections
-            Intersection rondPoint = new Intersection("Rond-Point", TypeIntersection.RondPoint);
-            Intersection cederLePassageIntersection = new Intersection("Céder le Passage", TypeIntersection.CederLePassage);
+            // Créer une intersection 
             Intersection feuTricoloreIntersection = new Intersection("Feu Tricolore", TypeIntersection.FeuTricolore);
 
-            // Créer des véhicules
+            // Créer  véhicules
             Voiture voiture1 = new Voiture();
+            Voiture voiture2 = new Voiture();
+            Voiture voiture3 = new Voiture();
 
-            // Simuler les actions des véhicules à différentes intersections
-            rondPoint.EntrerIntersection(voiture1);
-            rondPoint.Attendre(voiture1);
-            rondPoint.SortirIntersection(voiture1);
+            Task task1 = Task.Run(() => SimulerVehicule(feuTricoloreIntersection, voiture1));
+            Task task2 = Task.Run(() => SimulerVehicule(feuTricoloreIntersection, voiture2));
+            Task task3 = Task.Run(() => SimulerVehicule(feuTricoloreIntersection, voiture3));
 
-            feuTricoloreIntersection.EntrerIntersection(voiture1);
-            feuTricoloreIntersection.SortirIntersection(voiture1);
+            await Task.WhenAll(task1, task2, task3);
+        }
+
+        static async Task SimulerVehicule(Intersection intersection, Vehicule vehicule)
+        {
+            intersection.TraiterEntree(vehicule);
+
+            await Task.Delay(2000); 
+
+            intersection.PasserAuRouge(); // feu rouge
+            await Task.Delay(2000); 
+            intersection.PasserAuVert();// feu vert
+            await Task.Delay(2000); //
+
+            intersection.TraiterSortie(vehicule);
         }
     }
 }
