@@ -32,26 +32,25 @@ namespace SimulationTrafic
 
         public void TraiterEntree(Vehicule vehicule)
         {
-            Console.WriteLine($"{vehicule.Type} approche de l'intersection {Nom}.");
+            Console.WriteLine($"{vehicule.Name} approche de l'intersection {Nom}.");
             semaphore.Wait(); // Attendez le sémaphore pour garantir que seul un véhicule peut entrer à la fois
             // Logique pour entrer dans l'intersection
         }
 
         public void TraiterAttente(Vehicule vehicule)
         {
-            Console.WriteLine($"{vehicule.Type} attend à l'intersection {Nom} pour un chemin dégagé.");
+            Console.WriteLine($"{vehicule.Name} attend à l'intersection {Nom} pour un chemin dégagé.");
 
             // Vérifiez l'état du feu
             while (true)
             {
-                feuSemaphore.Wait(); // Attendez le sémaphore pour garantir une modification atomique de l'état du feu
+                feuSemaphore.Wait();
                 if (FeuVert)
                 {
                     feuSemaphore.Release();
                     break; // Si le feu est vert, sortir de la boucle d'attente
                 }
                 feuSemaphore.Release();
-                Console.WriteLine($"Le feu est rouge à l'intersection {Nom}. {vehicule.Type} attend.");
                 Thread.Sleep(1000); 
             }
         }
@@ -59,10 +58,8 @@ namespace SimulationTrafic
         public void TraiterSortie(Vehicule vehicule)
         {
             int sortieChoisie = ChoisirSortieAleatoire();
-            Console.WriteLine($"{vehicule.Type} a quitté l'intersection {Nom} par la sortie {sortieChoisie + 1}.");
-            semaphore.Release(); // Libérer le sémaphore pour permettre à d'autres véhicules d'entrer
-            // Logique pour sortir de l'intersection en utilisant la sortie choisie
-            // (ajoutez la logique appropriée en fonction de votre simulation).
+            Console.WriteLine($"{vehicule.Name} a quitté l'intersection {Nom} par la sortie {sortieChoisie + 1}.");
+            semaphore.Release();
         }
 
         public void PasserAuRouge()
@@ -71,21 +68,30 @@ namespace SimulationTrafic
             {
                 feuSemaphore.Wait(); // Verrouille l'accès au feu tricolore pendant la modification
                 FeuVert = false;
-                Console.WriteLine($"🔴Feu tricolore à l'intersection {Nom} passe au rouge.🔴");
+                Console.WriteLine($"🔴 Feu tricolore à l'intersection {Nom} passe au rouge.🔴");
+                Console.WriteLine("╔══╗");
+                Console.WriteLine("║🔴║");
+                Console.WriteLine("║⚫║");
+                Console.WriteLine("║⚫║");
+                Console.WriteLine("╚╤╤╝");
                 feuSemaphore.Release();
             }
         }
 
         public void PasserAuVert()
         {
-            if (Type == TypeIntersection.FeuTricolore)
-            {
                 feuSemaphore.Wait(); // Verrouille l'accès au feu tricolore pendant la modification
                 FeuVert = true;
-                Console.WriteLine($"🟢Feu tricolore à l'intersection {Nom} passe au vert.🟢");
+                Console.WriteLine($"🟢 Feu tricolore à l'intersection {Nom} passe au vert. 🟢");
+                Console.WriteLine("╔══╗");
+                Console.WriteLine("║⚫║");
+                Console.WriteLine("║⚫║");
+                Console.WriteLine("║🟢║");
+                Console.WriteLine("╚╤╤╝");
                 feuSemaphore.Release();
-            }
         }
+
+
 
         private int ChoisirSortieAleatoire()
         {
