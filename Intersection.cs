@@ -69,11 +69,11 @@ namespace SimulationTrafic
                 feuSemaphore.Wait(); // Verrouille l'accès au feu tricolore pendant la modification
                 FeuVert = false;
                 Console.WriteLine($"🔴 Feu tricolore à l'intersection {Nom} passe au rouge.🔴");
-                Console.WriteLine("╔══╗");
-                Console.WriteLine("║🔴║");
-                Console.WriteLine("║⚫║");
-                Console.WriteLine("║⚫║");
-                Console.WriteLine("╚╤╤╝");
+                Console.WriteLine("╔═══╗");
+                Console.WriteLine("║🔴 ║");
+                Console.WriteLine("║⚫ ║");
+                Console.WriteLine("║⚫ ║");
+                Console.WriteLine("╚╤╤═╝");
                 feuSemaphore.Release();
             }
         }
@@ -83,11 +83,11 @@ namespace SimulationTrafic
                 feuSemaphore.Wait(); // Verrouille l'accès au feu tricolore pendant la modification
                 FeuVert = true;
                 Console.WriteLine($"🟢 Feu tricolore à l'intersection {Nom} passe au vert. 🟢");
-                Console.WriteLine("╔══╗");
-                Console.WriteLine("║⚫║");
-                Console.WriteLine("║⚫║");
-                Console.WriteLine("║🟢║");
-                Console.WriteLine("╚╤╤╝");
+                Console.WriteLine("╔═══╗");
+                Console.WriteLine("║⚫ ║");
+                Console.WriteLine("║⚫ ║");
+                Console.WriteLine("║🟢 ║");
+                Console.WriteLine("╚╤╤═╝");
                 feuSemaphore.Release();
         }
 
