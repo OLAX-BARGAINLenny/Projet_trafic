@@ -1,5 +1,6 @@
 ﻿using SimulationTrafic;
 using System;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
 class Program
@@ -37,8 +38,8 @@ class Program
             Voiture voiture3 = new Voiture("Porsche🏎️ ");
 
             Task task1 = Task.Run(() => SimulerVehicule(intersection, voiture1, 0));
-            Task task2 = Task.Run(() => SimulerVehicule(intersection, voiture2, 1));
-            Task task3 = Task.Run(() => SimulerVehicule(intersection, voiture3, 2));
+            Task task2 = Task.Run(() => SimulerVehicule(intersection, voiture2, 0));
+            Task task3 = Task.Run(() => SimulerVehicule(intersection, voiture3, 0));
 
             await Task.WhenAll(task1, task2, task3);
         }
@@ -75,8 +76,7 @@ class Program
             {
                 await Task.Delay(2000);
             }
-
-            intersection.TraiterSortie(vehicule, entree);
+            
         }
     }
 }

@@ -15,13 +15,15 @@ namespace SimulationTrafic
 
         public void Bouger()
         {
-            Console.WriteLine($"{Type} {Name} se déplace.");
+            Console.WriteLine($"{Type} {Name} est sortie.");
             // Logique pour le mouvement du véhicule
         }
     }
 
     public class Voiture : Vehicule
     {
+        internal static string voiture1;
+
         public Voiture(string name) : base("Voiture", name)
         {
             // Vous pouvez ajouter une logique supplémentaire si nécessaire

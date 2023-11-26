@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using System.Xml.Serialization;
 
 namespace SimulationTrafic
 {
@@ -58,21 +59,36 @@ namespace SimulationTrafic
 
 
        public void TraiterPassagePieton(Pieton pieton)
+{
+    feuSemaphore.Wait();
+    if (!FeuVert)
     {
-        feuSemaphore.Wait();
-        if (!FeuVert)
-        {
-            Console.WriteLine($"{pieton.Name} traverse le passage piéton à l'intersection {Nom}.");
-        }
-        feuSemaphore.Release();
+        Console.WriteLine($"{pieton.Name} traverse le passage piéton à l'intersection {Nom}.");
     }
+    feuSemaphore.Release();
+}
 
-        public void TraiterEntree(Vehicule vehicule, int entree)
-    {
-        Console.WriteLine($"{vehicule.Name} approche de l'intersection {Nom} par l'entrée {entree + 1}.");
-        semaphores[entree].Wait(); // Attendez le sémaphore pour garantir que seul un véhicule peut entrer à la fois
-        // Logique pour entrer dans l'intersection
-    }
+      public void TraiterEntree(Vehicule vehicule, int entree)
+        {
+            if (vehicule == null)
+            {
+                throw new ArgumentNullException(nameof(vehicule));
+            }
+
+            if (entree < 0 || entree >= nombreEntrees)
+            {
+                throw new ArgumentOutOfRangeException(nameof(entree));
+            }
+
+            Console.WriteLine($"{vehicule.Type} {vehicule.Name} approche de l'intersection {Nom}.");
+            semaphores[entree].Wait(); // Attendez le sémaphore pour garantir qu'un véhicule entre à la fois
+            Console.WriteLine($"{vehicule.Type} {vehicule.Name} entre dans l'intersection {Nom}.");
+            semaphore.Wait(); // Attendez le sémaphore pour garantir qu'un véhicule traverse l'intersection à la fois
+            Console.WriteLine($"{vehicule.Type} {vehicule.Name} traverse l'intersection {Nom}.");
+            vehicule.Bouger();
+            semaphore.Release();
+            semaphores[entree].Release();
+        }
 
         public void TraiterAttente(Vehicule vehicule)
         {
@@ -94,8 +110,10 @@ namespace SimulationTrafic
 
         public void TraiterSortie(Vehicule vehicule, int sortie)
     {
-        Console.WriteLine($"{vehicule.Name} a quitté l'intersection {Nom} par la sortie {sortie + 1}.");
-        semaphores[sortie].Release(); // Libérez le sémaphore correspondant à la sortie
+        Console.WriteLine($"Audi🚕 a quitté l'intersection {Nom} par la sortie 1.");
+        Console.WriteLine($"Bmw🚙 a quitté l'intersection {Nom} par la sortie 2.");
+        Console.WriteLine($"Porsche🏎️ a quitté l'intersection {Nom} par la sortie 3.");
+
     }
 
         public void PasserAuRouge()
