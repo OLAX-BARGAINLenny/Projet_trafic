@@ -35,4 +35,13 @@ namespace SimulationTrafic
             // Vous pouvez ajouter une logique supplémentaire si nécessaire
         }
     }
+    public class Pieton : Vehicule
+    {
+        public Pieton(string name) : base("Piéton", name ?? throw new ArgumentNullException(nameof(name)))
+        {
+            // Vous pouvez ajouter une logique supplémentaire si nécessaire
+        }
+    }
 }
+
+

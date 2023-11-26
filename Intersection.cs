@@ -16,26 +16,63 @@ namespace SimulationTrafic
         private SemaphoreSlim semaphore = new SemaphoreSlim(1, 1); // Sémaphore pour contrôler l'accès à l'intersection
         private SemaphoreSlim feuSemaphore = new SemaphoreSlim(1, 1); // Sémaphore pour contrôler l'accès au feu tricolore
 
+        private List<Pieton> pietonsEnAttente = new List<Pieton>();
+
         public TypeIntersection Type { get; private set; }
         public string Nom { get; private set; }
         public bool FeuVert { get; private set; }
 
-        public Intersection(string nom, TypeIntersection type)
-        {
-            Nom = nom;
-            Type = type;
+        private SemaphoreSlim[] semaphores; // Tableau de sémaphores pour contrôler l'accès à chaque entrée
+        private int nombreEntrees;
 
-            // Initialise le feu tricolore à vert par défaut
-            if (Type == TypeIntersection.FeuTricolore)
-                FeuVert = true;
+
+
+        public Intersection(string nom, TypeIntersection type, int nombreEntrees)
+    {
+        Nom = nom;
+        Type = type;
+        this.nombreEntrees = nombreEntrees;
+        semaphores = new SemaphoreSlim[nombreEntrees];
+
+        for (int i = 0; i < nombreEntrees; i++)
+        {
+            semaphores[i] = new SemaphoreSlim(1, 1);
         }
 
-        public void TraiterEntree(Vehicule vehicule)
+        // Initialise le feu tricolore à vert par défaut
+        if (Type == TypeIntersection.FeuTricolore)
+            FeuVert = true;
+    }
+
+        public void TraiterEntree(Pieton pieton)
+    {
+        if (pieton == null)
         {
-            Console.WriteLine($"{vehicule.Name} approche de l'intersection {Nom}.");
-            semaphore.Wait(); // Attendez le sémaphore pour garantir que seul un véhicule peut entrer à la fois
-            // Logique pour entrer dans l'intersection
+            throw new ArgumentNullException(nameof(pieton));
         }
+
+        Console.WriteLine($"{pieton.Name} approche de l'intersection {Nom}.");
+        semaphores[0].Wait(); // Attendez le sémaphore pour garantir qu'un piéton entre à la fois
+        pietonsEnAttente.Add(pieton);
+    }
+
+
+       public void TraiterPassagePieton(Pieton pieton)
+    {
+        feuSemaphore.Wait();
+        if (!FeuVert)
+        {
+            Console.WriteLine($"{pieton.Name} traverse le passage piéton à l'intersection {Nom}.");
+        }
+        feuSemaphore.Release();
+    }
+
+        public void TraiterEntree(Vehicule vehicule, int entree)
+    {
+        Console.WriteLine($"{vehicule.Name} approche de l'intersection {Nom} par l'entrée {entree + 1}.");
+        semaphores[entree].Wait(); // Attendez le sémaphore pour garantir que seul un véhicule peut entrer à la fois
+        // Logique pour entrer dans l'intersection
+    }
 
         public void TraiterAttente(Vehicule vehicule)
         {
@@ -55,12 +92,11 @@ namespace SimulationTrafic
             }
         }
 
-        public void TraiterSortie(Vehicule vehicule)
-        {
-            int sortieChoisie = ChoisirSortieAleatoire();
-            Console.WriteLine($"{vehicule.Name} a quitté l'intersection {Nom} par la sortie {sortieChoisie + 1}.");
-            semaphore.Release();
-        }
+        public void TraiterSortie(Vehicule vehicule, int sortie)
+    {
+        Console.WriteLine($"{vehicule.Name} a quitté l'intersection {Nom} par la sortie {sortie + 1}.");
+        semaphores[sortie].Release(); // Libérez le sémaphore correspondant à la sortie
+    }
 
         public void PasserAuRouge()
         {
@@ -91,6 +127,14 @@ namespace SimulationTrafic
                 feuSemaphore.Release();
         }
 
+        public class Pieton : Vehicule
+        {
+            public Pieton(string name) : base("Piéton", name ?? throw new ArgumentNullException(nameof(name)))
+            {
+                // Vous pouvez ajouter une logique supplémentaire si nécessaire
+            }
+        }
+
 
 
         private int ChoisirSortieAleatoire()
@@ -111,6 +155,16 @@ namespace SimulationTrafic
                 default:
                     throw new InvalidOperationException("Type d'intersection non pris en charge.");
             }
+        }
+
+        internal void TraiterEntree(SimulationTrafic.Pieton pieton)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void TraiterPassagePieton(SimulationTrafic.Pieton pieton, int entree)
+        {
+            throw new NotImplementedException();
         }
     }
 }
